@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>Lesson 2</title>
+</head>
+<body>
+
+<div class="container">
+    <h1>Task 2</h1>
+
+    <div class="card w-50 my-5">
+        <div class="card-header">
+            Enter numbers
+        </div>
+        <div class="card-body">
+            <form class="form-inline">
+                <div class="form-group mr-3 my-1">
+                    <label for="getMinInput" class="sr-only">Numbers</label>
+                    <input type="text" class="form-control" id="getMinInput" placeholder="Numbers">
+                </div>
+                <button type="button" class="btn btn-primary my-1" id="getMinBtn">Get minimum</button>
+            </form>
+
+            <p class="mt-2">Result: <span id="getMinRes" class="badge badge-primary"></span></p>
+        </div>
+    </div>
+
+    <h1>Task 3</h1>
+
+    <div class="card w-50 my-5">
+        <div class="card-header">
+            File explorer
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-primary my-1" id="showFilesBtn">Show files</button>
+
+            <pre class="list-group mt-2" id="filesList"></pre>
+        </div>
+    </div>
+</div>
+
+    <script>
+        window.onload = function () {
+            const getMinInput = document.getElementById('getMinInput');
+            const getMinBtn = document.getElementById('getMinBtn');
+            const getMinRes = document.getElementById('getMinRes');
+
+            const getMin = function () {
+                getMinRes.innerText = '';
+
+                if (!getMinInput.value) {
+                    return;
+                }
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/min');
+                xhr.onload = function () {
+                    getMinRes.innerHTML = this.responseText;
+                };
+                xhr.onerror = (err) => console.log(err);
+                xhr.send(getMinInput.value);
+            };
+
+            getMinBtn.addEventListener('click', getMin);
+
+            const showFilesBtn = document.getElementById('showFilesBtn');
+            const filesList = document.getElementById('filesList');
+
+            const getFileList = function () {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/directory');
+                xhr.onload = function () {
+                    const data = JSON.parse(this.responseText);
+                    let result = '';
+                    if (data && data.length) {
+                        data.forEach((i) => result += `${i}\r\n`)
+                    }
+                    filesList.innerHTML = result;
+                };
+                xhr.onerror = (err) => console.log(err);
+                xhr.send();
+            };
+
+            showFilesBtn.addEventListener('click', getFileList);
+        }
+    </script>
+</body>
+</html>
